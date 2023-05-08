@@ -1,0 +1,3 @@
+#MULT: 	MACRO 	D, A1, P
+	...
+	#ENDM

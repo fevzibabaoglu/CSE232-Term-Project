@@ -1,0 +1,3 @@
+#SUB: 	MACRO 	D, A1, A2
+	...
+	#ENDM
