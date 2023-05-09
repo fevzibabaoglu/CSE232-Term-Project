@@ -79,9 +79,27 @@ int read(char *filename) {
 }
 
 void parse(char *line) {
-    // update field[10][7]
-
-    // code...
+    const char* delim = " \t\n";  // define delimiter characters
+    char field[10][7];            // define 2D array for storing fields
+    int fieldCount = 0;           // initialize field count to 0
+    char* token = strtok(line, delim);
+    
+    while (token != NULL && fieldCount < 10) {
+        if (strlen(token) > 6) {
+            printf("Error: field '%s' exceeds maximum length of 6 characters\n", token);
+            return;
+        }
+        strcpy(field[fieldCount++], token);  // copy token to current field
+        token = strtok(NULL, delim);       // get next token
+    }
+    
+    // print the fields
+    printf("(TEST PRINT) Fields are:");
+    for (int i = 0; i < fieldCount; i++) {
+        printf("field[%d]->%s ", i, field[i]);
+    }
+    printf("\n");
+    printf("\n");   
 }
 
 void is_macro() {
