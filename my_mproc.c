@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // global variables
 struct mac {
@@ -22,7 +23,8 @@ struct pt PT;
 
 int main_argc;
 char **main_argv;
-char *filename;
+char *filename;         //input file name
+char *asmfilename;      //output file name
 
 
 int read(char *filename);
@@ -41,6 +43,11 @@ int main(int argc, char *argv[]) {
     main_argc = argc;
     main_argv = argv;
     filename = argv[1];
+
+    char outputfilename[strlen(filename) + strlen(".asm") + 1];
+    strcpy(outputfilename, filename);
+    strcat(outputfilename, ".asm");
+    asmfilename = outputfilename;
 
     m_count = read(filename);
     
