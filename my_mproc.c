@@ -23,33 +23,43 @@ struct pt PT;
 
 int read(char *filename);
 void parse(char *file);
-void is_macro(char *argv[]);
+void is_macro(int argc, char *argv[]);
 void expand();
 void createPT();
 
 
 int main(int argc, char *argv[]) {
-    /*
-    Your macro-processor must take the input file name and condition parameters as arguments, using argc, argv.
-    Ex: ./my_mproc filename, 5,6
-    argv[1] is the filename, argv[2], argv[3]... are condition parameters (5 and 6 in this example).
-    */
-
-    if (argc == 0) exit(EXIT_FAILURE);
-
-    char *filename = argv[1];
-    char line[500];
-    FILE *file = fopen(filename, "r"); 
-    m_count = read(filename);
-    
-    if (!file) {
-        printf("\n Unable to open : %s ", filename);
+    if (argc == 0) {
+        printf("No argument is given!\n");
         exit(EXIT_FAILURE);
     }
 
+    char *filename = argv[1];
+
+    m_count = read(filename);
+    
+    FILE *file = fopen(filename, "r"); 
+    char line[500];
+
+    if (!file) {
+        printf("Unable to open : %s\n", filename);
+        exit(EXIT_FAILURE);
+    }
+
+    int is_prog = 0;
     while (fgets(line, sizeof(line), file)) {
+        // ignore until "PROG" comes
+        if (!is_prog) {
+            char line_temp[500];
+            strcpy(line_temp, line);
+            char *first_field = strtok(line_temp, " ");
+
+            if (!strcmp(first_field, "PROG")) is_prog = 1;
+            else continue;
+        }
+
         parse(line);
-        is_macro(argv);
+        is_macro(argc, argv);
     }
 
     fclose(file);
@@ -68,7 +78,7 @@ void parse(char *line) {
     // code...
 }
 
-void is_macro(char *argv[]) {
+void is_macro(int argc, char *argv[]) {
     // code...
 }
 
