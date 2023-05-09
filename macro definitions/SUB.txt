@@ -1,3 +1,8 @@
-#SUB: 	MACRO 	D, A1, A2
-	...
-	#ENDM
+#SUB MACRO D, A1, A2
+    PSHAA     ; Push accumulator A onto the stack
+    LDAA A1   ; Load first operand into accumulator A
+    SUBA A2   ; Subtract second operand from accumulator A
+    STAA A1   ; Store result back into first operand
+    PULAA     ; Pop accumulator A from the stack
+    STAA D    ; Store the result into destination
+#ENDM
