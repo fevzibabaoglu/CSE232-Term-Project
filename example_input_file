@@ -1,0 +1,13 @@
+PROG
+    LDAA #3
+    #NEG 100H,200H
+    INCA
+    #if ($2='x')
+        #NEG 300H,400H
+    #endif
+    #DIV R1, R2, R3
+    #MULT R4, R5, R6
+    #REM R7, R8, R9
+    #SUB R10, R11, R12
+    STAA 500H
+END

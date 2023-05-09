@@ -23,7 +23,7 @@ struct pt PT;
 
 int main_argc;
 char **main_argv;
-char *filename;         //input file name
+char *filename = "example_input_file";         //input file name
 char *asmfilename;      //output file name
 
 
@@ -42,15 +42,15 @@ int main(int argc, char *argv[]) {
 
     main_argc = argc;
     main_argv = argv;
-    filename = argv[1];
+    //filename = argv[1];
 
-    char outputfilename[strlen(filename) + strlen(".asm") + 1];
-    strcpy(outputfilename, filename);
-    strcat(outputfilename, ".asm");
-    asmfilename = outputfilename;
+    //char outputfilename[strlen(filename) + strlen(".asm") + 1];
+    //strcpy(outputfilename, filename);
+    //strcat(outputfilename, ".asm");
+    //asmfilename = outputfilename;
 
-    m_count = read(filename);
-    
+    //m_count = read(filename);
+
     FILE *file = fopen(filename, "r"); 
     char line[500];
 
@@ -61,17 +61,15 @@ int main(int argc, char *argv[]) {
 
     int is_prog = 0;
     while (fgets(line, sizeof(line), file)) {
-        // ignore until "PROG" comes
+        // ignore until "PROG" comes   
         if (!is_prog) {
             char line_temp[500];
             strcpy(line_temp, line);
             char *first_field = strtok(line_temp, " ");
-
+            parse(line);
             if (!strcmp(first_field, "PROG")) is_prog = 1;
-            else continue;
+            else continue;  
         }
-
-        parse(line);
         is_macro();
     }
 
