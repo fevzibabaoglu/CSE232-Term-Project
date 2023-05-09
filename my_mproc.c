@@ -20,21 +20,27 @@ struct pt {
 };
 struct pt PT;
 
+int main_argc;
+char **main_argv;
+char *filename;
+
 
 int read(char *filename);
 void parse(char *file);
-void is_macro(int argc, char *argv[]);
+void is_macro();
 void expand();
 void createPT();
 
 
 int main(int argc, char *argv[]) {
-    if (argc == 0) {
-        printf("No argument is given!\n");
+    if (argc < 1) {
+        printf("Not enough arguments!\n");
         exit(EXIT_FAILURE);
     }
 
-    char *filename = argv[1];
+    main_argc = argc;
+    main_argv = argv;
+    filename = argv[1];
 
     m_count = read(filename);
     
@@ -59,7 +65,7 @@ int main(int argc, char *argv[]) {
         }
 
         parse(line);
-        is_macro(argc, argv);
+        is_macro();
     }
 
     fclose(file);
@@ -78,7 +84,7 @@ void parse(char *line) {
     // code...
 }
 
-void is_macro(int argc, char *argv[]) {
+void is_macro() {
     // code...
 }
 
