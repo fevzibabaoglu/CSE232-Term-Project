@@ -114,7 +114,57 @@ void is_macro() {
 }
 
 void expand() {
-    // code...
+    createPT();
+
+    char macro_cpy[257];
+    for (int i = 0; i < m_count; i++) {
+        if (strcmp(buffer[i].mname, PT.mname) == 0) {
+            strcpy(macro_cpy, buffer[i].macro);
+            
+            // if last character is not a next line, add space at the end
+            char last_char = buffer[i].macro[strlen(buffer[i].macro) - 1];
+            if (last_char != '\n') {
+                strcat(macro_cpy, "\n");
+            }
+
+            break;
+        }
+    }
+
+    char non_space_chunk[50] = "";
+    char write_chunk[50] = "";
+    char current_char;
+    FILE *asmfile = fopen(asmfilename, "a");
+
+    for (int i = 0; i < strlen(macro_cpy); i++) {
+        current_char = macro_cpy[i];
+
+        if (current_char == ' ' || current_char == '\n' || current_char == '\t') {
+            strcpy(write_chunk, non_space_chunk);
+
+            // check whether the word is non-empty string or not
+            if (strlen(non_space_chunk) != 0) {
+
+                // check word, if word is in pt.dummy replace it with pt.actual
+                for (int j = 0; j < PT.nparams; j++) {
+                    if (strcmp(non_space_chunk, PT.dummy[j]) == 0) {
+                        strcpy(write_chunk, PT.actual[j]);
+                        break;
+                    }
+                }
+
+                strcpy(non_space_chunk, "");
+            }
+
+            // write to file
+            fprintf(asmfile, "%s%c", write_chunk, current_char);
+        }
+        else {
+            strncat(non_space_chunk, &current_char, 1);
+        }
+    }
+
+    fclose(asmfile);
 }
 
 void createPT() {
