@@ -64,8 +64,9 @@ int main(int argc, char *argv[]) {
         // ignore until "PROG" comes
         if (!is_prog) {
             char line_temp[500];
+            const char delim[4] = " \t\n";
             strcpy(line_temp, line);
-            char *first_field = strtok(line_temp, " ");
+            char *first_field = strtok(line_temp, delim);
 
             if (!strcmp(first_field, "PROG")) is_prog = 1;
             else continue;
