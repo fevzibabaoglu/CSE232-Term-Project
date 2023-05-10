@@ -1,3 +1,10 @@
 #MULT: 	MACRO 	D, A1, P
-	...
+	LDAA	A1
+	LDAB	P
+ML	CMPB	#0
+	BEQ 	ME
+	ASLA
+	DECB
+	BRA 	ML
+ME	STAA	D
 	#ENDM
