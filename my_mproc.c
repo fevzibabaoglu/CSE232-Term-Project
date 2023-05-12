@@ -168,7 +168,44 @@ void expand() {
 }
 
 void createPT() {
-    // update PT
+    strcpy(PT.mname, mname);
+    PT.nparams = nparams;
 
-    // code...
+    for(int i = 0; i < nparams; i++) {
+        strcpy(PT.dummy[i], param[i]);
+        strcpy(PT.actual[i], actual[i]);
+    }
+}
+
+
+void createPT() {
+    char macro_name[8];
+    int param_count = 0;
+    for (int i = 0; i < strlen(field[0]); i++) {
+        if (field[0][i] == ',') {
+            param_count++;
+        }
+    }
+    param_count++; // there will be one more parameter than the number of commas
+
+    PT.nparams = param_count;
+    strcpy(PT.mname, field[0]);
+
+    // Initialize all dummy and actual parameter arrays to empty strings
+    for (int i = 0; i < 10; i++) {
+        strcpy(PT.dummy[i], "");
+        strcpy(PT.actual[i], "");
+    }
+
+    // Parse each parameter and add it to the PT structure
+    char* token;
+    int i = 0;
+    for (int j = 1; j < param_count+1; j++) {
+        token = strtok(field[j], ",");
+        while (token != NULL && i < 10) {
+            strcpy(PT.dummy[i], token);
+            i++;
+            token = strtok(NULL, ",");
+        }
+    }
 }
