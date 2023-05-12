@@ -3,7 +3,7 @@ PROG
     #NEG 100H,200H
     INCA
     #if ($2='x')
-        #NEG 300H,400H
+        #NEG 300H, 400H
     #endif
     #DIV R1, R2, R3
     #MULT R4, R5, R6

@@ -84,7 +84,7 @@ int read(char *filename) {
 }
 
 void parse(char *line) {
-    const char* delim = " \t\n";  // define delimiter characters
+    const char* delim = " ,'()=\t\n";  // define delimiter characters
     int fieldCount = 0;           // initialize field count to 0
     char* token = strtok(line, delim);
     
