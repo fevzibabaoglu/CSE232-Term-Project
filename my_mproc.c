@@ -81,9 +81,56 @@ int main(int argc, char *argv[]) {
 }
 
 int read(char *filename) {
-    // update buffer[10]
+    // Open the file in read mode
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        // If unable to open file, print error message and exit
+        printf("Unable to open : %s\n", filename);
+        exit(EXIT_FAILURE);
+    }
+    
+    // Initialize variables
+    char line[500];
+    int count = 0;
 
-    // code...
+    // Read file line by line
+    while (fgets(line, sizeof(line), file)) {
+        // Check if line contains a macro definition
+        if (strstr(line, "MACRO") != NULL) {
+            // Parse macro definition
+            char mname[8];
+            char param[10][4];
+            char macro[256];
+            sscanf(line, "%s %s %[^\n]s", mname, param[0], macro);
+
+            // Parse macro parameters
+            int nparams = 1;
+            while (strstr(macro, ",") != NULL) {
+                char *p = strstr(macro, ",");
+                *p = ' ';
+                sscanf(p+1, "%s", param[nparams++]);
+            }
+
+            // Store macro definition in buffer
+            strcpy(buffer[count].mname, mname);
+            for (int i = 0; i < nparams; i++) {
+                strcpy(buffer[count].param[i], param[i]);
+            }
+            strcpy(buffer[count].macro, macro);
+            count++;
+
+            // Print warning if maximum number of macros is reached
+            if (count == 10) {
+                printf("Warning: maximum number of macro definitions reached (10)\n");
+                break;
+            }
+        }
+    }
+    
+    // Close the file and return the number of macro definitions read
+    fclose(file);
+    return count;
+    
 }
 
 void parse(char *line) {
