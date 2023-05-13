@@ -100,15 +100,14 @@ int read(char *filename) {
             // Parse macro definition
             char mname[8];
             char param[10][4];
-            char macro[256];
-            sscanf(line, "%s %s %[^\n]", mname, param[0], macro);
+            char *macro;
+            sscanf(line, "%s %s %[^\n]", mname, param[0], &macro);
 
             // Parse macro parameters
             int nparams = 1;
-            while (strstr(macro, ",") != NULL) {
-                char *p = strstr(macro, ",");
-                *p = ' ';
-                sscanf(p+1, "%s", param[nparams++]);
+            while (macro != NULL) {
+                param[nparams++] = macro;
+                macro = strtok(NULL, ",");
             }
 
             // Store macro definition in buffer
@@ -130,6 +129,7 @@ int read(char *filename) {
     // Close the file and return the number of macro definitions read
     fclose(file);
     return count;
+    
     
 }
 
