@@ -217,7 +217,6 @@ void expand() {
 
 
 void createPT() {
-    char macro_name[8];
     int param_count = 0;
     for (int i = 0; i < strlen(field[0]); i++) {
         if (field[0][i] == ',') {
