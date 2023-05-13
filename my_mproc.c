@@ -215,19 +215,8 @@ void expand() {
     fclose(asmfile);
 }
 
-void createPT() {
-    strcpy(PT.mname, mname);
-    PT.nparams = nparams;
-
-    for(int i = 0; i < nparams; i++) {
-        strcpy(PT.dummy[i], param[i]);
-        strcpy(PT.actual[i], actual[i]);
-    }
-}
-
 
 void createPT() {
-    char macro_name[8];
     int param_count = 0;
     for (int i = 0; i < strlen(field[0]); i++) {
         if (field[0][i] == ',') {
