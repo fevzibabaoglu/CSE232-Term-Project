@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
 }
 
 int read(char *filename) {
-    // Open the file in read mode
+     // Open the file in read mode
     FILE *file = fopen(filename, "r");
     if (!file) {
         // If unable to open file, print error message and exit
@@ -100,14 +100,15 @@ int read(char *filename) {
             // Parse macro definition
             char mname[8];
             char param[10][4];
-            char *macro;
-            sscanf(line, "%s %s %[^\n]", mname, param[0], &macro);
+            char macro[256];
+            sscanf(line, "%s %s %[^\n]s", mname, param[0], macro);
 
             // Parse macro parameters
             int nparams = 1;
-            while (macro != NULL) {
-                param[nparams++] = macro;
-                macro = strtok(NULL, ",");
+            while (strchr(macro, ',') != NULL) {
+                char *p = strchr(macro, ',');
+                *p = ' ';
+                sscanf(p+1, "%s", param[nparams++]);
             }
 
             // Store macro definition in buffer
