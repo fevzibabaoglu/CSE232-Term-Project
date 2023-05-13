@@ -101,7 +101,7 @@ int read(char *filename) {
             char mname[8];
             char param[10][4];
             char macro[256];
-            sscanf(line, "%s %s %[^\n]s", mname, param[0], macro);
+            sscanf(line, "%s %s %[^\n]", mname, param[0], macro);
 
             // Parse macro parameters
             int nparams = 1;
