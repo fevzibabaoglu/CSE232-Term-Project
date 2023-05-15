@@ -81,59 +81,47 @@ int main(int argc, char *argv[]) {
 }
 
 int read(char *filename) {
-     // Open the file in read mode
-    FILE *file = fopen(filename, "r");
-    if (!file) {
-        // If unable to open file, print error message and exit
-        printf("Unable to open : %s\n", filename);
-        exit(EXIT_FAILURE);
+    const char* delim = ":, \t\n";  // define delimiter characters including space and tab
+    FILE *fp;
+    char line[256];
+    int macro_count = 0;
+
+    fp = fopen(filename, "r");
+    if (fp == NULL) {
+        printf("Failed to open file %s\n", filename);
+        return -1;
     }
-    
-    // Initialize variables
-    char line[500];
-    int count = 0;
 
-    // Read file line by line
-    while (fgets(line, sizeof(line), file)) {
-        // Check if line contains a macro definition
-        if (strstr(line, "MACRO") != NULL) {
-            // Parse macro definition
-            char mname[8];
-            char param[10][4];
-            char macro[256];
-            sscanf(line, "%s %s %[^\n]", mname, param[0], macro);
-
-            // Parse macro parameters
-            int nparams = 1;
-            while (strchr(macro, ',') != NULL) {
-                char *p = strchr(macro, ',');
-                *p = ' ';
-                sscanf(p+1, "%s", param[nparams++]);
+    while (fgets(line, sizeof(line), fp)) {
+        line[strcspn(line, "\r\n")] = 0; // remove trailing newline characters
+        if (strcmp(line, "PROG") == 0) {
+            break;
+        }
+        char* token = strtok(line, delim);
+        if (token != NULL && token[0] == '#') {
+            // this line contains a MACRO definition
+            strncpy(buffer[macro_count].mname, &token[1], sizeof(buffer[0].mname));
+            int param_count = 0;
+            token = strtok(NULL, delim); // get first parameter
+            while (token != NULL && strcmp(token, "#ENDM") != 0) {
+                strncpy(buffer[macro_count].param[param_count++], token, sizeof(buffer[0].param[0]));
+                token = strtok(NULL, delim);
             }
-
-            // Store macro definition in buffer
-            strcpy(buffer[count].mname, mname);
-            for (int i = 0; i < nparams; i++) {
-                strcpy(buffer[count].param[i], param[i]);
+            buffer[macro_count].param[param_count][0] = '\0'; // set last parameter to empty string
+            buffer[macro_count].macro[0] = '\0'; // initialize macro body to empty string
+            while (fgets(line, sizeof(line), fp) && strcmp(line, "#ENDM\n") != 0) {
+                line[strcspn(line, "\r\n")] = 0; // remove trailing newline characters
+                strcat(buffer[macro_count].macro, line);
+                strcat(buffer[macro_count].macro, "\n");
             }
-            strcpy(buffer[count].macro, macro);
-            count++;
-
-            // Print warning if maximum number of macros is reached
-            if (count == 10) {
-                printf("Warning: maximum number of macro definitions reached (10)\n");
-                break;
-            }
+            macro_count++; // increment the number of macros read
         }
     }
-    
-    // Close the file and return the number of macro definitions read
-    fclose(file);
-    return count;
-    
-    
-}
 
+    fclose(fp);
+
+    return macro_count;
+}
 void parse(char *line) {
     const char* delim = " ,'()=\t\n";  // define delimiter characters
     int fieldCount = 0;           // initialize field count to 0
