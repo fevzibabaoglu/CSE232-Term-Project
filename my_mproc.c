@@ -80,47 +80,56 @@ int main(int argc, char *argv[]) {
     exit(EXIT_SUCCESS);
 }
 
-int read(char *filename) {
-    const char* delim = ":, \t\n";  // define delimiter characters including space and tab
-    FILE *fp;
+int read(char* filename) {
+    const char* delim = ":, \t\n";
+    FILE* file;
     char line[256];
-    int macro_count = 0;
+    
 
-    fp = fopen(filename, "r");
-    if (fp == NULL) {
+    file = fopen(filename, "r");
+    if (file == NULL) {
         printf("Failed to open file %s\n", filename);
         return -1;
     }
 
-    while (fgets(line, sizeof(line), fp)) {
+    while (fgets(line, sizeof(line), file)) {
         line[strcspn(line, "\r\n")] = 0; // remove trailing newline characters
+
         if (strcmp(line, "PROG") == 0) {
             break;
         }
+
         char* token = strtok(line, delim);
+
         if (token != NULL && token[0] == '#') {
-            // this line contains a MACRO definition
-            strncpy(buffer[macro_count].mname, &token[1], sizeof(buffer[0].mname));
+            // This line contains a MACRO definition
+            sscanf(token, "%[^:]s", buffer[macro_count].mname);
             int param_count = 0;
-            token = strtok(NULL, delim); // get first parameter
+            token = strtok(NULL, delim); // skip "MACRO"
+            token = strtok(NULL, delim); // get first parameter 
+
             while (token != NULL && strcmp(token, "#ENDM") != 0) {
-                strncpy(buffer[macro_count].param[param_count++], token, sizeof(buffer[0].param[0]));
+                if (param_count < MAX_PARAM_COUNT) {
+                    strncpy(buffer[m_count].param[param_count++], token, sizeof(buffer[m_count].param[0]) - 1);
+                    buffer[m_count].param[param_count][sizeof(buffer[m_count].param[0]) - 1] = '\0'; // add null-termination
+                }
                 token = strtok(NULL, delim);
             }
-            buffer[macro_count].param[param_count][0] = '\0'; // set last parameter to empty string
-            buffer[macro_count].macro[0] = '\0'; // initialize macro body to empty string
-            while (fgets(line, sizeof(line), fp) && strcmp(line, "#ENDM\n") != 0) {
+
+            buffer[m_count].macro[0] = '\0'; // initialize macro body to empty string
+
+            while (fgets(line, sizeof(line), file) && strcmp(line, "#ENDM\n") != 0) {
                 line[strcspn(line, "\r\n")] = 0; // remove trailing newline characters
-                strcat(buffer[macro_count].macro, line);
-                strcat(buffer[macro_count].macro, "\n");
+                strcat(buffer[m_count].macro, line);
+                strcat(buffer[m_count].macro, "\n");
             }
-            macro_count++; // increment the number of macros read
+
+            m_count++; // increment the number of macros read
         }
     }
 
-    fclose(fp);
-
-    return macro_count;
+    fclose(file);
+    return m_count;
 }
 void parse(char *line) {
     const char* delim = " ,'()=\t\n";  // define delimiter characters
