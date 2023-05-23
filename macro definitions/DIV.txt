@@ -1,3 +1,14 @@
-#DIV: 	MACRO 	D, A1, P
-	...
-	#ENDM
+#DIV MACRO D, A1, P
+    PSHAA        
+    LDAA A1      
+    LDAA A2, =1  ; Load the divisor/bölen (power of 2)
+    LSLA A2, P   ; Calculate the power of 2
+    DIV_LOOP:    
+        SUBA A1, A2   	; Subtract divisor from dividend (bölünen - bölen)
+        BCC DIV_FINISH  ; Branch if carry is clear (bölünen >= bölen)
+        INC D         ; Increment the quotient (bölüm)
+        BRA DIV_LOOP 
+    DIV_FINISH:
+    PULAA        
+    STAA D       
+#ENDM
