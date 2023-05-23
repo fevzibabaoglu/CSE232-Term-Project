@@ -159,24 +159,18 @@ void is_macro() {
     
     //if there is a condition, starting with #if
     if (strcmp(field[0], "#if") == 0) { //string comparison. It is equal to zero when both strings are found to be identical.
-    
         char * indexString = field[1] + 1;
         int index = atoi(indexString);
-        
-        if (strcmp(main_argv[index], field[2]) == 0) { //field[2] değişebilir parse fonksiyonuna göre, field[2] -> = yapıp bunu field[3] olarak değiştirebilriz
-            
+        if (strcmp(main_argv[index], field[2]) == 0) { 
             for (int i = 0; i < 7; i++) {               //field[3] becomes field[0] an so on for expand() and createPT() functions usage
                 strcpy(field[i], field[i + 3]);
             }
-            
             for (int i = 7; i < 10; i++) {
                 strcpy(field[i], "\0");
             }
-            
             expand();
             return;
-        }
-        
+        }  
     } else {
         //looking for a macro
         if (strchr(field[0], '#') != NULL){
@@ -198,7 +192,6 @@ void is_macro() {
         fclose(fp);
     }
 }
-
 
 
 void expand() {
