@@ -1,3 +1,5 @@
 #ADD: 	MACRO 	D, A1, A2
-	...
+	LDAA A1    ; Load the value at memory location A1 into the accumulator A
+   	ADDA A2    ; Add the value at memory location A2 to the accumulator A
+   	STAA D     ; Store the result in the memory location D
 	#ENDM
