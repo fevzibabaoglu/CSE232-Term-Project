@@ -156,8 +156,50 @@ void parse(char *line) {
 
 
 void is_macro() {
-    // code...
+    
+    //if there is a condition, starting with #if
+    if (strcmp(field[0], "#if") == 0) { //string comparison. It is equal to zero when both strings are found to be identical.
+    
+        char * indexString = field[1] + 1;
+        int index = atoi(indexString);
+        
+        if (strcmp(main_argv[index], field[2]) == 0) { //field[2] değişebilir parse fonksiyonuna göre, field[2] -> = yapıp bunu field[3] olarak değiştirebilriz
+            
+            for (int i = 0; i < 7; i++) {               //field[3] becomes field[0] an so on for expand() and createPT() functions usage
+                strcpy(field[i], field[i + 3]);
+            }
+            
+            for (int i = 7; i < 10; i++) {
+                strcpy(field[i], "\0");
+            }
+            
+            expand();
+            return;
+        }
+        
+    } else {
+        //looking for a macro
+        if (strchr(field[0], '#') != NULL){
+            expand();
+            return;
+        }
+        
+        // no macro call found, writing line to .asm file
+        FILE *fp;
+        fp = fopen(asmfilename, "a");
+        fprintf(fp, "%s", field[0]);
+        for (int i = 1; i < 10; i++) {
+            if (strlen(field[i]) == 0) {
+                break;
+            }
+            fprintf(fp, " %s", field[i]);
+        }
+        fprintf(fp, "\n");
+        fclose(fp);
+    }
 }
+
+
 
 void expand() {
     createPT();
