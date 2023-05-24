@@ -263,11 +263,11 @@ void expand() {
 void createPT() {
     // remove '#' if there is
     if (field[0][0] == '#') {
-        strcpy(field[0], field[0] + 1);
+        memmove(field[0], field[0]+1, strlen(field[0]));
     }
 
     // find the correct buffer index
-    int bufferIndex;
+    int bufferIndex = -1;
     for (int i = 0; i < m_count; i++) {
         if (strcmp(field[0], buffer[i].mname) == 0) {
             bufferIndex = i;
@@ -276,6 +276,7 @@ void createPT() {
     }
 
     if (bufferIndex < 0 || bufferIndex >= m_count) {
+        printf("buffer index: %d\n", bufferIndex);
         exit(EXIT_FAILURE);
     }
 
@@ -285,12 +286,11 @@ void createPT() {
     // set the dummy parameters and find number of parameters
     int numOfParams = 0;
     for (int i = 0; i < 10; i++) {
-        if (!strlen(buffer[bufferIndex].param[i])) {
-            break;
+        if (strlen(buffer[bufferIndex].param[i])) {
+            numOfParams++;
         }
-        
+
         strcpy(PT.dummy[i], buffer[bufferIndex].param[i]);
-        numOfParams++;
     }
 
     // set the number of parameters
@@ -298,10 +298,6 @@ void createPT() {
 
     // set the actual parameters
     for (int i = 1; i < 10; i++) {
-        if (!strlen(field[i])) {
-            break;
-        }
-
         // truncate the field and find the actual parameter
         char actualParam[4];
         strncpy(actualParam, field[i], 3);
