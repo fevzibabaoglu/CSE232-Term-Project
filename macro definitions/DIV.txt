@@ -1,3 +1,6 @@
 #DIV: 	MACRO 	D, A1, P
-	...
+	LDAA	A		; Load the dividend (bölünen)
+	LDAB	P		; Load the power of 2 (P)
+	ASRB			; Shift right according to P
+	STAA	D		
 	#ENDM
