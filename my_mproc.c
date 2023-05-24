@@ -251,32 +251,49 @@ void expand() {
 
 
 void createPT() {
-    int param_count = 0;
-    for (int i = 0; i < strlen(field[0]); i++) {
-        if (field[0][i] == ',') {
-            param_count++;
+    // remove '#' if there is
+    if (field[0][0] == '#') {
+        strcpy(field[0], field[0] + 1);
+    }
+
+    // find the correct buffer index
+    int bufferIndex;
+    for (int i = 0; i < m_count; i++) {
+        if (strcmp(field[0], buffer[i].mname) == 0) {
+            bufferIndex = i;
+            break;
         }
     }
-    param_count++; // there will be one more parameter than the number of commas
 
-    PT.nparams = param_count;
-    strcpy(PT.mname, field[0]);
+    // set the mname
+    strcpy(PT.mname, buffer[bufferIndex].mname);
 
-    // Initialize all dummy and actual parameter arrays to empty strings
+    // set the dummy parameters and find number of parameters
+    int numOfParams = 0;
     for (int i = 0; i < 10; i++) {
-        strcpy(PT.dummy[i], "");
-        strcpy(PT.actual[i], "");
+        if (!strlen(buffer[bufferIndex].param[i])) {
+            break;
+        }
+        
+        strcpy(PT.dummy[i], buffer[bufferIndex].param[i]);
+        numOfParams++;
     }
 
-    // Parse each parameter and add it to the PT structure
-    char* token;
-    int i = 0;
-    for (int j = 1; j < param_count+1; j++) {
-        token = strtok(field[j], ",");
-        while (token != NULL && i < 10) {
-            strcpy(PT.dummy[i], token);
-            i++;
-            token = strtok(NULL, ",");
+    // set the number of parameters
+    PT.nparams = numOfParams;
+
+    // set the actual parameters
+    for (int i = 1; i < 10; i++) {
+        if (!strlen(field[i])) {
+            break;
         }
+
+        // truncate the field and find the actual parameter
+        char actualParam[4];
+        strncpy(actualParam, field[i], 3);
+        actualParam[3] = '\0';
+
+        // set the actual parameter
+        strcpy(PT.actual[i - 1], actualParam);
     }
 }
