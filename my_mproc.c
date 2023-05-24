@@ -62,14 +62,13 @@ int main(int argc, char *argv[]) {
 
     int is_prog = 0;
     while (fgets(line, sizeof(line), file)) {
+        line[strcspn(line, "\r\n")] = 0;
         // ignore until "PROG" comes
         if (!is_prog) {
-            char line_temp[500];
             const char delim[4] = " \t\n";
-            strcpy(line_temp, line);
-            char *first_field = strtok(line_temp, delim);
+            char *first_field = strtok(line, delim);
 
-            if (!strcmp(first_field, "PROG")) is_prog = 1;
+            if (strcmp(first_field, "PROG") == 0) is_prog = 1;
             else continue;
         }
 
@@ -147,13 +146,15 @@ void parse(char *line) {
         token = strtok(NULL, delim);       // get next token
     }
     
+    /*
     // print the fields
     printf("(TEST PRINT) Fields are:");
     for (int i = 0; i < fieldCount; i++) {
         printf("field[%d]->%s ", i, field[i]);
     }
     printf("\n");
-    printf("\n");   
+    printf("\n"); 
+    */  
 }
 
 
@@ -264,6 +265,10 @@ void createPT() {
             bufferIndex = i;
             break;
         }
+    }
+
+    if (bufferIndex < 0 || bufferIndex >= m_count) {
+        exit(EXIT_FAILURE);
     }
 
     // set the mname
