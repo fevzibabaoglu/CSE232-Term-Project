@@ -196,12 +196,12 @@ void is_macro() {
         // no macro call found, writing line to .asm file
         FILE *fp;
         fp = fopen(asmfilename, "a");
-        fprintf(fp, "%s", field[0]);
-        for (int i = 1; i < 10; i++) {
+        
+        for (int i = 0; i < 10; i++) {
             if (strlen(field[i]) == 0) {
                 break;
             }
-            fprintf(fp, " %s", field[i]);
+            fprintf(fp, "%s ", field[i]);
         }
         fprintf(fp, "\n");
         fclose(fp);
@@ -212,12 +212,13 @@ void is_macro() {
 void expand() {
     createPT();
 
+    // copy the macro body and add new line char at the end
     char macro_cpy[257];
     for (int i = 0; i < m_count; i++) {
         if (strcmp(buffer[i].mname, PT.mname) == 0) {
             strcpy(macro_cpy, buffer[i].macro);
             
-            // if last character is not a next line, add space at the end
+            // if last character is not a next line, add next line at the end
             char last_char = buffer[i].macro[strlen(buffer[i].macro) - 1];
             if (last_char != '\n') {
                 strcat(macro_cpy, "\n");
@@ -227,36 +228,44 @@ void expand() {
         }
     }
 
-    char non_space_chunk[50] = "";
-    char write_chunk[50] = "";
+    char word_chunk[50] = "";
+    char write_line[500] = "";
     char current_char;
     FILE *asmfile = fopen(asmfilename, "a");
 
     for (int i = 0; i < strlen(macro_cpy); i++) {
         current_char = macro_cpy[i];
 
-        if (current_char == ' ' || current_char == '\n' || current_char == '\t') {
-            strcpy(write_chunk, non_space_chunk);
-
-            // check whether the word is non-empty string or not
-            if (strlen(non_space_chunk) != 0) {
-
-                // check word, if word is in pt.dummy replace it with pt.actual
-                for (int j = 0; j < PT.nparams; j++) {
-                    if (strcmp(non_space_chunk, PT.dummy[j]) == 0) {
-                        strcpy(write_chunk, PT.actual[j]);
-                        break;
-                    }
-                }
-
-                strcpy(non_space_chunk, "");
-            }
-
-            // write to file
-            fprintf(asmfile, "%s%c", write_chunk, current_char);
+        // if current_char is not an escape sequence, add it to word
+        // continue with the remaining chars
+        if (!strchr(" \t\n\r", current_char)) {
+            strncat(word_chunk, &current_char, 1);
+            continue;
         }
-        else {
-            strncat(non_space_chunk, &current_char, 1);
+
+        // check whether the word is non-empty string or not
+        if (strlen(word_chunk) != 0) {
+
+            // check word, if word is in pt.dummy replace it with pt.actual
+            for (int j = 0; j < PT.nparams; j++) {
+                if (strcmp(word_chunk, PT.dummy[j]) == 0) {
+                    strcpy(word_chunk, PT.actual[j]);
+                    break;
+                }
+            }
+        }
+
+        // add word to line and reset word
+        if (strlen(word_chunk)) {
+            strcat(write_line, word_chunk);
+            strcat(write_line, " ");
+            strcpy(word_chunk, "");
+        }
+
+        // write line to file and reset line
+        if (current_char == '\n') {
+            fprintf(asmfile, "%s\n", write_line);
+            strcpy(write_line, "");
         }
     }
 
