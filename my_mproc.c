@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#define MAX_PARAM_COUNT 10
 
 // global variables
 struct mac {
@@ -103,8 +104,8 @@ int read(char* filename) {
 
         if (token != NULL && token[0] == '#') {
             // This line contains a MACRO definition
-            sscanf(token + 1, "%[^:]s", buffer[macro_count].mname);
-            //sscanf(token, "%[^:]s", buffer[macro_count].mname);
+            sscanf(token + 1, "%[^:]s", buffer[m_count].mname);
+            
             int param_count = 0;
             token = strtok(NULL, delim); // skip "MACRO"
             token = strtok(NULL, delim); // get first parameter 
