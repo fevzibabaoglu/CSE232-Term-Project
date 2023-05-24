@@ -1,6 +1,8 @@
 #DIV: 	MACRO 	D, A1, P
 	LDAA	A		; Load the dividend (bölünen)
 	LDAB	P		; Load the power of 2 (P)
-	ASRB			; Shift right according to P
+DIV_LOOP:
+	ASRB			; Shift right the dividend (bölünen)
+	SOB B, DIV_LOOP		; Subtract one from B and branch to DIV_LOOP if B is not zero
 	STAA	D		
 	#ENDM
