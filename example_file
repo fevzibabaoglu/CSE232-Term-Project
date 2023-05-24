@@ -39,5 +39,5 @@ ME	STAA	D
     #if ($2=’x’) NEG 300,400
     STAA 500H
     #MULT 100, 200,300
-    #ADD    200, 300
+    #ADD    200, 300, 400
     END
