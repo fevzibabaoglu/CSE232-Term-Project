@@ -141,10 +141,14 @@ int read(char* filename) {
     return m_count; // return the total number of macros read
 }
 void parse(char *line) {
-    const char* delim = " ,'()=\t\n";  // define delimiter characters
+    const char* delim = " ,'’()=\t\n";  // define delimiter characters
     int fieldCount = 0;           // initialize field count to 0
+
+    for (int i = 0; i < 10; i++) {
+        strcpy(field[i], "");
+    }
+
     char* token = strtok(line, delim);
-    
     while (token != NULL && fieldCount < 10) {
         if (strlen(token) > 6) {
             printf("Error: field '%s' exceeds maximum length of 6 characters\n", token);
