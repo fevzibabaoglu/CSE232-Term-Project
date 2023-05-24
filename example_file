@@ -1,7 +1,7 @@
 #ADD: 	MACRO 	D, A1, A2
 	LDAA A1
-   	ADDA A2
-   	STAA D
+	ADDA A2
+	STAA D
 	#ENDM
 #DIV: 	MACRO 	D, A1, P
 	...
@@ -20,24 +20,24 @@ ME	STAA	D
 	...
 	#ENDM
 #SUB MACRO D, A1, A2
-    PSHAA
-    LDAA A1
-    SUBA A2
-    STAA A1
-    PULAA
-    STAA D
-    #ENDM
+	PSHAA
+	LDAA A1
+	SUBA A2
+	STAA A1
+	PULAA
+	STAA D
+	#ENDM
 #NEG: MACRO D, A
-    LDAB A
-    NEGB
-    STAB D
-    #ENDM
-    PROG
-    LDAA #3
-    #NEG 100 ,200
-    INCA
-    #if ($2=’x’) NEG 300,400
-    STAA 500H
-    #MULT 100, 200,300
-    #ADD    200, 300, 400
-    END
+	LDAB A
+	NEGB
+	STAB D
+	#ENDM
+	PROG
+	LDAA #3
+	#NEG 100 ,200
+	INCA
+	#if ($2=’x’) NEG 300,400
+	STAA 500
+	#MULT 100, 200,300
+	#ADD    200, 300, 400
+	END
