@@ -1,8 +1,10 @@
 #DIV: 	MACRO 	D, A1, P
-	LDAA	A		; Load the dividend (bölünen)
-	LDAB	P		; Load the power of 2 (P)
-DIV_LOOP:
-	ASRB			; Shift right the dividend (bölünen)
-	SOB B, DIV_LOOP		; Subtract one from B and branch to DIV_LOOP if B is not zero
-	STAA	D		
+	LDAA	A1		;dividend (bölünen)
+	LDAB	P		;power of 2 to be used as the divisor (bölen)
+DIV_LOOP:	CMPB	#0	;compare if the divisor is 0
+	BEQ 	DIV_END		;(branch if equal) zero flag is set
+	ASRA			;shift right
+	DECB			;reduce the power of 2
+	BRA 	DIV_LOOP
+DIV_END:	STAA	D	;store quotient (bölüm)
 	#ENDM
