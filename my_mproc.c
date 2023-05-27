@@ -169,18 +169,18 @@ void parse(char *line) {
 
 void is_macro() {
     
-    // check whether there is a condition (it starts with "#if" field)
+    // check whether if there is a condition (it starts with "#if" field)
     if (strcmp(field[0], "#if") == 0) { //string comparison. It is equal to zero when both strings are found to be identical.
         
-        char * indexString = field[1] + 1;  // get the string after the leading "$" sign
-        int index = atoi(indexString);      // find the int index value
+        char * indexString = field[1] + 1;  // get the string after the leading "$" sign in condition parameter (eg: $2)
+        int index = atoi(indexString);      // find the int index value to use in main_argv[]
 
-        if (strcmp(main_argv[index], field[2]) == 0) { 
+        if (strcmp(main_argv[index], field[2]) == 0) {  //evaluate the condition and check if it is true
             for (int i = 0; i < 7; i++) {               //field[3] becomes field[0] an so on for expand() and createPT() functions usage
                 strcpy(field[i], field[i + 3]);
             }
 
-            for (int i = 7; i < 10; i++) {
+            for (int i = 7; i < 10; i++) {  //fill the last 3 fields with \0
                 strcpy(field[i], "\0");
             }
 
@@ -189,22 +189,21 @@ void is_macro() {
         }  
     } 
 
-    // look for a macro call
-    else if (strchr(field[0], '#') != NULL){
+    // look for a macro call (starting with #)
+    else if (strchr(field[0], '#') != NULL){    //check if field[0] has # char
         expand();
         return;
     }
     
     // no macro call found, writing line to .asm file
     else {
-        FILE *fp = fopen(asmfilename, "a");
+        FILE *fp = fopen(asmfilename, "a");     //file opened in append mode (does not overwrite, any data written to the file will be added to the end)
         
         // write the fields to the output file
         for (int i = 0; i < 10; i++) {
             if (strlen(field[i]) == 0) {
                 break;
             }
-
             fprintf(fp, "%s ", field[i]);
         }
         fprintf(fp, "\n");
